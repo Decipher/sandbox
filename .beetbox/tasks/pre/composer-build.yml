@@ -1,0 +1,21 @@
+---
+
+- name: Composer install
+  composer:
+    command: install
+    working_dir: "{{ beet_base }}"
+
+- name: Ensure themes directory
+  file:
+    path: "{{ beet_root }}/profiles/{{ drupal_install_profile }}/themes"
+    state: directory
+
+- name: Symlink profile contents
+  file:
+    src: "../../../{{ file.src }}"
+    dest: "{{ beet_root }}/profiles/{{ drupal_install_profile }}/{{ file.dest | default(file.src) }}"
+    state: link
+    force: yes
+  with_items: sandbox_files
+  loop_control:
+    loop_var: file

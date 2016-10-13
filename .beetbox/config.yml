@@ -1,0 +1,33 @@
+---
+
+# Beetbox settings.
+
+beet_domain: sandbox.local
+beet_provision_playbook: build
+beet_root: "{{ beet_base }}/docroot"
+
+
+
+# Drupal settings.
+
+drupal_install_site: yes
+drupal_install_profile: sandbox
+
+
+
+# Drupal code review ettings.
+
+dcr_init_dir: "{{ beet_base }}"
+
+
+
+# Custom settings.
+
+sandbox_files:
+  - src: config
+  - src: sandbox.info.yml
+  - src: sandbox.profile
+  - src: ../modules
+    dest: modules/custom
+  - src: ../themes
+    dest: themes/custom

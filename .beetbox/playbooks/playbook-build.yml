@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  connection: local
+  become: yes
+
+  environment:
+    PATH: "{{ lookup('env','PATH') }}:/root/.composer/vendor/bin"
+
+  vars:
+    beet_profile: "{{ lookup('env','BEET_PROFILE') | default('beetbox',true) }}"
+
+  vars_files:
+    - config/default.config.yml
+    - "config/profiles/{{ beet_profile }}.config.yml"
+    - config/project.config.yml
+    - config/host.config.yml
+    - config/config.yml
+    - config/local.config.yml
+
+  pre_tasks:
+    - include: "{{ item }}"
+      with_fileglob:
+        - "{{ beet_custom_pre_tasks }}"
+
+  roles:
+    - role: beetbox-init
+    - role: beetbox-php-ppa
+    - role: geerlingguy.apache
+    - role: geerlingguy.php
+    - role: beetboxvm.drupal
+      drush_path: /usr/local/bin/drush
+    - role: beetbox-web
+    - role: alexdesignworks.dcr
+
+  post_tasks:
+    - include: "{{ item }}"
+      with_fileglob:
+        - "{{ beet_custom_post_tasks }}"

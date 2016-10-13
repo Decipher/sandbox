@@ -1,0 +1,72 @@
+#!/bin/sh
+
+#######
+# Setup
+#######
+
+PATH="$PATH:/usr/local/bin"
+
+echo "Pre-commit hook" >&2
+echo "===============" >&2
+echo >&2
+
+# Fetch the list of files that have changed.
+FILES="$(git diff --staged --name-only HEAD --diff-filter=ACMRTUXB)"
+
+
+
+###########
+# PHP lint.
+###########
+
+echo "PHP lint" >&2
+echo "--------" >&2
+echo >&2
+
+# Run PHP lint.
+for filename in $FILES; do
+  php -l $filename;
+done;
+
+echo >&2
+echo >&2
+
+
+
+#####################
+# Drupal code review.
+#####################
+
+echo "Drupal code review" >&2
+echo "------------------" >&2
+echo >&2
+
+# Find DCR.
+VAGRANT_SSH=0
+DCR=$(which dcr)
+
+# If no DCR, check Vagrant.
+VAGRANT=$(which vagrant)
+if [ ! -z "$VAGRANT" ] && [ -z "$DCR" ]; then
+  VAGRANT_SSH=1
+  DCR=$($VAGRANT ssh -c "which dcr")
+fi;
+
+if [ -z "$DCR" ]; then
+  echo "DCR not found!" >&2
+  echo >&2
+  echo "DCR must be installed either on the host or guest machine." >&2
+  exit 1
+fi;
+
+FILES=${FILES[@]}
+if [ $VAGRANT_SSH ]; then
+  $VAGRANT ssh -c "cd {{ beet_base }} && $DCR $FILES"
+else
+  $DCR $FILES
+fi;
+
+echo >&2
+echo >&2
+
+exit ${PIPESTATUS[0]}

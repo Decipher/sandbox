@@ -1,0 +1,10 @@
+---
+
+- name: Add Git hooks
+  template:
+    src: "{{ beet_base }}/.beetbox/templates/{{ item }}.j2"
+    dest: "{{ beet_base }}/.git/hooks/{{ item }}"
+    mode: u+rwx
+  with_items:
+    - commit-msg
+    - pre-commit
