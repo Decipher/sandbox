@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  connection: local
+  become: yes
+
+  environment:
+    PATH: "{{ lookup('env','PATH') }}:{{ sandbox_env_path }}"
+
+  vars:
+    beet_profile: "{{ lookup('env','BEET_PROFILE') | default('beetbox',true) }}"
+
+  vars_files:
+    - config/default.config.yml
+    - "config/profiles/{{ beet_profile }}.config.yml"
+    - config/project.config.yml
+    - config/host.config.yml
+    - config/config.yml
+    - config/local.config.yml
+
+#  roles:
+#    - role: beetbox-php-ppa
+#    - role: beetboxvm.packages
+#      extra_packages:
+#        - mysql-client
+#        - python-mysqldb
+#    - role: geerlingguy.apache
+#    - role: geerlingguy.mailhog
+
+  tasks:
+    - name: Include CI config.
+      include_vars: "{{ beet_base }}/.beetbox/ci.config.yml"
+      when: "{{ lookup('env','BEET_CI') }}"
+
+    - name: Validate composer file.
+      composer:
+        command: validate
+        working_dir: "{{ beet_base }}"
+
+    - name: Drupal code review.
+      command: dcr -v --no-messages
+      args:
+        chdir: "{{ beet_base }}"
+
+#    - name: Install site, ensuring that a fresh install of the profile works.
+#      command: /usr/bin/env PHP_OPTIONS="-d sendmail_path=/bin/true" {{ drush_path }} si -y {{ drupal_install_profile }} --db-url=mysql://root@mysql/beetbox
+#      args:
+#        chdir: "{{ beet_web }}"
+
+#    - name: Behat tests.
+#      command: behat
+#      args:
+#        chdir: "{{ beet_base }}/tests/behat"

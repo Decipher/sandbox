@@ -1,0 +1,22 @@
+---
+
+machine:
+  services:
+    - docker
+
+dependencies:
+  cache_directories:
+    - "~/docker"
+  override:
+    - docker pull beet/box
+    - docker run --name build -it -v $(pwd):/var/beetbox -e "BEET_CI=true" --entrypoint /beetbox/provisioning/beetbox.sh beet/box build
+
+database:
+  pre:
+    - docker pull mysql
+  override:
+    - docker run --name mysql -d -e MYSQL_ALLOW_EMPTY_PASSWORD='yes' -e MYSQL_DATABASE='beetbox' mysql; sleep 10
+
+test:
+  override:
+    - docker run --name test -it -h dm.local -v $(pwd):/var/beetbox -e "BEET_CI=true" --link mysql --entrypoint /beetbox/provisioning/beetbox.sh beet/box test

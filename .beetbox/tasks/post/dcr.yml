@@ -1,0 +1,11 @@
+---
+
+- name: Configure PHPCS standards for DCR.
+  command: "vendor/bin/phpcs --config-set installed_paths {{ dcr_standards }} > /dev/null"
+  args:
+    chdir: "{{ beet_base }}"
+
+- name: Configure PHPCBF standards for DCR.
+  command: "vendor/bin/phpcbf --config-set installed_paths {{ dcr_standards }} > /dev/null"
+  args:
+    chdir: "{{ beet_base }}"

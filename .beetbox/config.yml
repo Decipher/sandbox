@@ -15,14 +15,15 @@ drupal_install_profile: sandbox
 
 
 
-# Drupal code review ettings.
+# Drupal code review settings.
 
-dcr_init_dir: "{{ beet_base }}"
+dcr_standards: "../../drupal/coder/coder_sniffer,../../alexdesignworks/dcr/php_codesniffer,../../../.dcr"
 
 
 
 # Custom settings.
 
+sandbox_env_path: "{{ beet_base }}/vendor/bin"
 sandbox_files:
   - src: config
   - src: sandbox.info.yml
