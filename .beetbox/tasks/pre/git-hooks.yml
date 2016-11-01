@@ -1,10 +1,17 @@
 ---
 
+- name: Ensure Git hooks directory exists.
+  file:
+    path: "{{ beet_base }}/.git/hooks"
+    state: directory
+
 - name: Add Git hooks
   template:
-    src: "{{ beet_base }}/.beetbox/templates/{{ item }}.j2"
-    dest: "{{ beet_base }}/.git/hooks/{{ item }}"
+    src: "{{ beet_base }}/.beetbox/templates/{{ file }}.j2"
+    dest: "{{ beet_base }}/.git/hooks/{{ file }}"
     mode: u+rwx
   with_items:
     - commit-msg
     - pre-commit
+  loop_control:
+    loop_var: file

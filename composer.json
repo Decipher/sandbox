@@ -1,5 +1,5 @@
 {
-  "name": "Decipher/sandbox",
+  "name": "decipher/sandbox",
   "description": "Sandbox",
   "type": "drupal-profile",
   "license": "GPL-2.0+",
@@ -19,8 +19,11 @@
     "composer/installers": "^1.0.20",
     "drupal-composer/drupal-scaffold": "^2.0.1",
     "cweagans/composer-patches": "~1.0",
-    "drupal/core": "8.2.0",
-    "drupal/filefield_paths": "*"
+    "drupal/core": "^8.2.0",
+    "drupal/filefield_paths": "^1.0-beta1"
+  },
+  "require-dev": {
+    "alexdesignworks/dcr": "^0.3.0"
   },
   "conflict": {
     "drupal/drupal": "*"
