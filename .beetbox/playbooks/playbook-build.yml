@@ -4,7 +4,7 @@
   become: yes
 
   environment:
-    PATH: "{{ lookup('env','PATH') }}:/root/.composer/vendor/bin"
+    PATH: "{{ lookup('env','PATH') }}:{{ sandbox_env_path }}"
 
   vars:
     beet_profile: "{{ lookup('env','BEET_PROFILE') | default('beetbox',true) }}"
@@ -18,6 +18,10 @@
     - config/local.config.yml
 
   pre_tasks:
+    - name: Include CI config.
+      include_vars: "{{ beet_base }}/.beetbox/ci.config.yml"
+      when: "{{ lookup('env','BEET_CI') }}"
+
     - include: "{{ item }}"
       with_fileglob:
         - "{{ beet_custom_pre_tasks }}"
@@ -30,7 +34,6 @@
     - role: beetboxvm.drupal
       drush_path: /usr/local/bin/drush
     - role: beetbox-web
-    - role: alexdesignworks.dcr
 
   post_tasks:
     - include: "{{ item }}"

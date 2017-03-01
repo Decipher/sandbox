@@ -1,0 +1,14 @@
+---
+
+steps:
+  - name: Build
+    plugin: Script
+    script:
+      - composer self-update
+      - composer install
+
+  - name: Install
+    plugin: Drupal
+    drupalVersion: 8
+    subDirectory: docroot
+    runInstall: standard
